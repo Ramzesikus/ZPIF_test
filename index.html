@@ -53,6 +53,7 @@
   .btn:hover{transform:translateY(-1px);}
   .btn-primary{background:var(--red);color:#fff;box-shadow:0 10px 24px -12px rgba(139,26,26,.6);}
   .btn-primary:hover{box-shadow:0 14px 28px -10px rgba(139,26,26,.65);}
+  .btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none;transform:none;pointer-events:none;}
   .btn-ghost{background:var(--paper);color:var(--ink);border-color:var(--line);}
   .btn-ghost:hover{border-color:var(--red);color:var(--red);}
 
@@ -100,16 +101,16 @@
   svg.chart{display:block;width:100%;height:auto;overflow:visible;}
   .bar-gray{fill:#D7D0C6;}
   .bar-red{fill:var(--red);}
-  .bar-val{font-family:'Inter';font-size:9.5px;fill:#948C81;}
+  .bar-val{font-family:'Inter';font-size:11px;fill:#948C81;}
   .bar-val-red{fill:var(--red);font-weight:700;}
-  .bar-year{font-size:9.5px;fill:#948C81;}
-  .chart-unit-label{font-size:8.5px;font-style:italic;font-weight:700;fill:var(--green);}
+  .bar-year{font-size:11px;fill:#948C81;}
+  .chart-unit-label{font-size:9.5px;font-style:italic;font-weight:700;fill:var(--green);}
   .legend-swatch-gray{fill:#D7D0C6;}
   .legend-swatch-red{fill:var(--red);}
-  .legend-text{font-size:9px;fill:var(--muted);}
+  .legend-text{font-size:10.5px;fill:var(--muted);}
   .bar-yield{font-size:9.5px;fill:#8A6415;font-weight:800;}
-  .delta-pos{fill:var(--green);font-weight:700;font-size:10.5px;}
-  .delta-neg{fill:var(--redneg);font-weight:700;font-size:10.5px;}
+  .delta-pos{fill:var(--green);font-weight:700;font-size:12.5px;}
+  .delta-neg{fill:var(--redneg);font-weight:700;font-size:12.5px;}
 
   .threshold-box{margin-top:8px;padding-top:9px;border-top:1px solid var(--line);font-size:11.5px;line-height:1.4;color:var(--muted);}
   .threshold-box .th-num{font-family:'Manrope';font-weight:800;font-size:21px;color:var(--red);margin-bottom:2px;}
@@ -169,6 +170,7 @@
   #company-field.open{max-height:90px;}
   .form-status{font-size:13.5px;margin-top:14px;display:none;}
   .form-status.ok{color:var(--green);display:block;}
+  .form-status.err{color:var(--redneg);display:block;}
 
   footer{border-top:1px solid var(--line);padding:26px 0;font-size:11.5px;color:var(--muted);}
 
@@ -400,7 +402,7 @@ function renderChart(svgId, rows, key, maxVal, legendLabel2){
   const W=460;
   const n=rows.length;
   const groupW = W/n;
-  const barW = groupW*0.34, gap = groupW*0.04;
+  const barW = groupW*0.36, gap = groupW*0.03;
   const padSide=(groupW-2*barW-gap)/2;
   /* plotTop/baseline are FIXED and identical for both charts regardless of
      total viewBox height, so a given ruble value always renders at the same
@@ -554,6 +556,15 @@ document.getElementById('capitalSlider').addEventListener('input', e=>{
   updatePct(e.target);
   updateCalc();
 });
+
+// CSS touch-action:none не всегда работает на iOS Safari именно для нативных
+// range-инпутов (давний баг WebKit) — здесь та же блокировка скролла страницы
+// продублирована через JS как подстраховка.
+{
+  const sliderEl = document.getElementById('capitalSlider');
+  sliderEl.addEventListener('touchstart', function(e){ e.preventDefault(); }, {passive:false});
+  sliderEl.addEventListener('touchmove', function(e){ e.preventDefault(); }, {passive:false});
+}
 
 let resizeTimer;
 window.addEventListener('resize', ()=>{
