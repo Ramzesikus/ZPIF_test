@@ -44,7 +44,7 @@
   .switch .thumb{position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);background:var(--red);border-radius:999px;transition:transform .35s cubic-bezier(.65,0,.35,1);z-index:1;box-shadow:0 4px 10px -4px rgba(139,26,26,.5);}
   [data-tab="fl"] .switch .thumb{transform:translateX(100%);}
 
-  .hero{padding:80px 0 60px;}
+  .hero{padding-top:80px;padding-bottom:60px;}
   .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);margin-bottom:20px;}
   h1{font-family:'Manrope';font-size:clamp(32px,5vw,50px);line-height:1.12;font-weight:800;margin:0 0 20px;max-width:17ch;letter-spacing:-0.015em;}
   .hero p.lede{font-size:clamp(16px,2vw,18px);color:var(--muted);max-width:56ch;line-height:1.6;margin:0 0 34px;}
@@ -82,7 +82,7 @@
   .calc-value span{color:var(--muted);font-size:0.4em;font-family:'Inter';font-weight:600;margin-left:6px;}
   .calc-slider-col{padding-bottom:2px;}
 
-  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:20px;background:transparent;outline:none;margin:6px 0 4px;border:none;padding:0;}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:20px;background:transparent;outline:none;margin:6px 0 4px;border:none;padding:0;touch-action:none;}
   input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--red) 0%,var(--red) var(--pct,25%),var(--line) var(--pct,25%),var(--line) 100%);}
   input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:4px solid var(--red);cursor:pointer;margin-top:-8px;box-shadow:0 3px 8px rgba(139,26,26,.35);}
   input[type=range]::-moz-range-track{height:5px;background:var(--line);border-radius:3px;}
@@ -186,7 +186,7 @@
       GRAND CAPITAL
     </div>
     <div class="head-right">
-      <a href="tel:+74951234567" class="head-phone">+7 (495) 123-45-67</a>
+      <a href="tel:+74950000000" class="head-phone">+7 (495) 000-00-00</a>
       <a href="#contacts" class="head-contacts-link">Контакты</a>
       <div class="switch" id="tabSwitch">
         <div class="thumb"></div>
@@ -287,10 +287,10 @@
     <div class="card"><div class="card-body"><b>Куртепов Игорь</b>+7 (910) 409-4789</div></div>
   </div>
   <div class="card org-block"><div class="card-body">
-    ООО «Гранд Капитал»<br>
-    123112, г. Москва, вн. тер. г. муниципальный округ Пресненский, проезд 1-ый Красногвардейский, д. 21, стр. 2, помещ. 4804<br>
-    info@ukgrandcap.ru · +7 (495) 970-44-92<br><br>
-    Лицензия на осуществление деятельности по управлению инвестиционными фондами, паевыми инвестиционными фондами и негосударственными пенсионными фондами № 21-000-1-01143.
+    ООО «Компания»<br>
+    111111, г. Москва, проспект Ленина, 25<br>
+    info@company.ru · +7 (495) 000-00-00<br><br>
+    Лицензия на осуществление деятельности по управлению инвестиционными фондами, паевыми инвестиционными фондами и негосударственными пенсионными фондами № 11-11111-11-111.
   </div></div>
 </section>
 
@@ -325,8 +325,6 @@
   </div></div>
 </div>
 </section>
-
-<footer class="wrap">© Grand Capital</footer>
 
 <script>
 function computeSeries(capital, taxRate, r, fee0, idx, years){
@@ -629,6 +627,11 @@ document.getElementById('leadForm').addEventListener('submit', function(e){
   };
   if(!payload.name || !payload.phone){
     status.textContent = 'Заполните имя и телефон.';
+    status.className = 'form-status err';
+    return;
+  }
+  if(!document.getElementById('f-consent').checked){
+    status.textContent = 'Нужно отметить согласие на обработку персональных данных.';
     status.className = 'form-status err';
     return;
   }
