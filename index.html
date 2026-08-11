@@ -318,10 +318,10 @@
       <span>Даю согласие на обработку персональных данных в соответствии с 152-ФЗ «О персональных данных» и <a href="#" onclick="return false;">политикой конфиденциальности</a>.</span>
     </label>
     <label class="consent">
-      <input type="checkbox" id="f-newsletter">
+      <input type="checkbox" id="f-newsletter" checked>
       <span>Согласен получать рассылку с аналитикой рынка и предложениями по инвестициям.</span>
     </label>
-    <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Отправить заявку</button>
+    <button type="submit" id="leadSubmitBtn" class="btn btn-primary" style="width:100%;justify-content:center;" disabled>Отправить заявку</button>
     <div class="form-status" id="formStatus"></div>
   </form>
   </div></div>
@@ -557,15 +557,6 @@ document.getElementById('capitalSlider').addEventListener('input', e=>{
   updateCalc();
 });
 
-// CSS touch-action:none не всегда работает на iOS Safari именно для нативных
-// range-инпутов (давний баг WebKit) — здесь та же блокировка скролла страницы
-// продублирована через JS как подстраховка.
-{
-  const sliderEl = document.getElementById('capitalSlider');
-  sliderEl.addEventListener('touchstart', function(e){ e.preventDefault(); }, {passive:false});
-  sliderEl.addEventListener('touchmove', function(e){ e.preventDefault(); }, {passive:false});
-}
-
 let resizeTimer;
 window.addEventListener('resize', ()=>{
   clearTimeout(resizeTimer);
@@ -623,6 +614,19 @@ document.querySelectorAll('input[name=role]').forEach(r=>{
   });
 });
 
+function updateSubmitState(){
+  const name = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const consent = document.getElementById('f-consent').checked;
+  document.getElementById('leadSubmitBtn').disabled = !(name && phone && consent);
+}
+['f-name','f-phone','f-consent'].forEach(id=>{
+  const el = document.getElementById(id);
+  el.addEventListener('input', updateSubmitState);
+  el.addEventListener('change', updateSubmitState);
+});
+updateSubmitState();
+
 document.getElementById('leadForm').addEventListener('submit', function(e){
   e.preventDefault();
   const status = document.getElementById('formStatus');
@@ -658,6 +662,7 @@ document.getElementById('leadForm').addEventListener('submit', function(e){
         this.reset();
         document.querySelectorAll('.radio-pill').forEach((p,i)=>p.classList.toggle('checked', i===0));
         document.getElementById('company-field').classList.remove('open');
+        updateSubmitState();
       } else {
         throw new Error((r && r.error) || 'unknown error');
       }
@@ -666,7 +671,7 @@ document.getElementById('leadForm').addEventListener('submit', function(e){
       status.textContent = 'Не получилось отправить. Попробуйте ещё раз или напишите нам напрямую.';
       status.className = 'form-status err';
     })
-    .finally(()=>{ submitBtn.disabled = false; });
+    .finally(()=>{ updateSubmitState(); });
 });
 
 renderAll();
