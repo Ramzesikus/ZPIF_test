@@ -354,7 +354,6 @@ const CONTENT = {
     potentialTax:"Налог на прибыль не платится, пока доход остаётся в фонде — он откладывается до момента выплаты пайщику.",
     mechLeft:'Доход → налог удерживается сразу (ежеквартально) → <b>реинвестируется сумма за вычетом налога</b>',
     taxRate:0.25,
-    taxLabel:"Налог на прибыль: 25%",
     taxShort:"налог на прибыль",
     thresholdA:180,
     thresholdB:{2:2880,3:1460,4:990,5:750},
@@ -375,7 +374,6 @@ const CONTENT = {
     potentialTax:"НДФЛ не платится, пока доход остаётся в фонде — он откладывается до момента выплаты пайщику.",
     mechLeft:'Доход → налог удерживается сразу (либо, для депозитов, раз в год) → <b>реинвестируется сумма за вычетом налога</b>',
     taxRate:0.15,
-    taxLabel:"Ставка НДФЛ: 15%",
     taxShort:"НДФЛ",
     thresholdA:300,
     thresholdB:{2:4800,3:2420,4:1630,5:1240},
@@ -404,10 +402,6 @@ function renderChart(svgId, rows, key, maxVal, legendLabel2){
   const groupW = W/n;
   const barW = groupW*0.36, gap = groupW*0.03;
   const padSide=(groupW-2*barW-gap)/2;
-  /* plotTop/baseline are FIXED and identical for both charts regardless of
-     total viewBox height, so a given ruble value always renders at the same
-     pixel height in both charts (extra viewBox height for the yield row is
-     added below the shared baseline, it never changes the bar scale). */
   /* plotTop/baseline are FIXED and identical for both charts regardless of
      total viewBox height, so a given ruble value always renders at the same
      pixel height in both charts. plotTop is pushed down enough to always
@@ -503,7 +497,15 @@ function updateCalc(){
   document.getElementById('capitalDisplay').innerHTML = fmtCapital(capital)+'<span>млрд ₽</span>';
 
   const rows = computeSeries(capital, c.taxRate, R, FEE0, IDX, YEARS);
-  const sharedMax = Math.max(...rows.map(r=>Math.max(r.H,r.M,r.O))) * 1.22;
+  // Масштаб графика жёстко привязан к капиталу (не к максимуму текущих данных):
+  // так 1-й серый столбик («без фонда») всегда одной и той же высоты независимо
+  // от того, какой капитал выбран на ползунке — H1 = capital*(1+r*(1-tax)), это
+  // строго линейная функция капитала, поэтому H1/capital — константа, и если
+  // maxVal тоже пропорционален capital, то и высота столбика в пикселях не
+  // меняется. Множитель 2,8 подобран так, чтобы самое высокое значение (7-й год,
+  // худший случай по обеим ставкам налога и всему диапазону ползунка) не вылезало
+  // за верхний край графика — с запасом.
+  const sharedMax = capital * 2.8;
   renderChart('chartGrowth', rows, 'M', sharedMax, 'с фондом (до налога)');
   renderChart('chartRisk', rows, 'O', sharedMax, 'с фондом (после налога)');
 
@@ -640,16 +642,6 @@ document.getElementById('leadForm').addEventListener('submit', function(e){
     message: document.getElementById('f-message').value.trim(),
     newsletter: document.getElementById('f-newsletter').checked,
   };
-  if(!payload.name || !payload.phone){
-    status.textContent = 'Заполните имя и телефон.';
-    status.className = 'form-status err';
-    return;
-  }
-  if(!document.getElementById('f-consent').checked){
-    status.textContent = 'Нужно отметить согласие на обработку персональных данных.';
-    status.className = 'form-status err';
-    return;
-  }
   const submitBtn = this.querySelector('button[type=submit]');
   submitBtn.disabled = true;
   status.textContent = 'Отправляем…';
