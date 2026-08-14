@@ -942,6 +942,7 @@ document.getElementById('leadForm').addEventListener('submit', function(e){
     company: document.getElementById('f-company').value.trim(),
     message: document.getElementById('f-message').value.trim(),
     newsletter: document.getElementById('f-newsletter').checked,
+    visitorId: getVisitorId(),
   };
   const submitBtn = this.querySelector('button[type=submit]');
   submitBtn.disabled = true;
