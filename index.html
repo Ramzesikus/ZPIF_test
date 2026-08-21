@@ -242,6 +242,15 @@
   .form-status.err{color:var(--redneg);display:block;}
 
   footer{border-top:1px solid var(--line);padding:26px 0;font-size:11.5px;color:var(--muted);}
+  footer p{margin:0 0 10px;}
+  footer p:last-child{margin-bottom:0;}
+  footer a{color:var(--red);}
+
+  .qual-gate{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .qual-gate-card{max-width:560px;background:#fff;border-radius:16px;padding:40px 36px;box-shadow:0 0 0 1px var(--line);text-align:left;}
+  .qual-gate-card p{font-size:15.5px;line-height:1.65;color:var(--ink);margin:0 0 28px;}
+  .qual-gate-card .btn{width:100%;justify-content:center;}
+  body.qual-locked{overflow:hidden;}
 
   .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease;}
   .reveal.in{opacity:1;transform:none;}
@@ -249,6 +258,13 @@
 </style>
 </head>
 <body data-tab="ul">
+
+<div id="qualGate" class="qual-gate">
+  <div class="qual-gate-card">
+    <p>Вы открыли сайт с информацией, предназначенной исключительно для квалифицированных инвесторов. Финансовые инструменты для этой категории могут отличаться сложной структурой и повышенными рисками, включая риск потери начальных инвестиций. Поэтому для их приобретения обязателен статус квалифицированного инвестора.</p>
+    <button type="button" id="qualGateOk" class="btn btn-primary">Ок</button>
+  </div>
+</div>
 
 <header>
   <div class="wrap headbar">
@@ -610,11 +626,11 @@
     <div class="field"><label for="f-message">Сообщение</label><textarea id="f-message" name="message" placeholder="Например: примерная сумма и горизонт"></textarea></div>
     <label class="consent">
       <input type="checkbox" id="f-consent" required>
-      <span>Даю согласие на обработку персональных данных в соответствии с 152-ФЗ «О персональных данных» и <a href="#" onclick="return false;">политикой конфиденциальности</a>.</span>
+      <span>Даю <a href="/docs/consent-personal-data.html" target="_blank" rel="noopener">согласие</a> на обработку персональных данных в соответствии с 152-ФЗ «О персональных данных» и <a href="/docs/privacy-policy.html" target="_blank" rel="noopener">политикой конфиденциальности</a>.</span>
     </label>
     <label class="consent">
       <input type="checkbox" id="f-newsletter">
-      <span>Согласен получать рассылку с аналитикой рынка и предложениями по инвестициям.</span>
+      <span><a href="/docs/ad-consent.html" target="_blank" rel="noopener">Согласен</a> получать рассылку с аналитикой рынка и предложениями по инвестициям.</span>
     </label>
     <button type="submit" id="leadSubmitBtn" class="btn btn-primary" style="width:100%;justify-content:center;" disabled>Отправить заявку</button>
     <div class="form-status" id="formStatus"></div>
@@ -963,6 +979,12 @@ document.getElementById('leadForm').addEventListener('submit', function(e){
 renderAll();
 sendVisitPing();
 
+document.body.classList.add('qual-locked');
+document.getElementById('qualGateOk').addEventListener('click', function(){
+  document.getElementById('qualGate').remove();
+  document.body.classList.remove('qual-locked');
+});
+
 document.addEventListener('click', function(e){
   const btn = e.target.closest('.cmp-toggle');
   if(!btn) return;
@@ -980,5 +1002,18 @@ if('IntersectionObserver' in window){
   document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
 }
 </script>
+<footer class="footer">
+  <div class="wrap">
+    <p>Вся информация, содержащаяся в маркетинговых и иных материалах ООО «Гранд Капитал», в том числе о будущей доходности паев ЗПИФ, является предположительной.</p>
+    <p>Все финансовые расчеты и модели являются только прогнозом, за достоверность которого ООО «Гранд Капитал» не несет ответственности.</p>
+    <p>Стоимость инвестиционных паев может увеличиваться и уменьшаться, результаты инвестирования в прошлом не определяют доходы в будущем.</p>
+    <p>ООО «Гранд Капитал» ни при каких обстоятельствах не гарантирует доходность инвестиций в паевые инвестиционные фонды.</p>
+    <p>Государство не гарантирует доходность инвестиций в инвестиционные фонды.</p>
+    <p>Денежные средства, передаваемые в оплату инвестиционных паев, не застрахованы в соответствии с Федеральным законом от 23.12.2003 № 177-ФЗ «О страховании вкладов в банках Российской Федерации».</p>
+    <p>Информация, размещенная на сайте, не является публичной офертой. Прежде чем приобрести инвестиционный пай паевого инвестиционного фонда следует внимательно ознакомиться с правилами доверительного управления таким паевым инвестиционным фондом.</p>
+    <p>Получить более подробную информацию о фондах под управлением ООО «Гранд Капитал» и ознакомиться с правилами доверительного управления, а также с иными документами, предусмотренными Федеральным законом от 29.11.2001 года № 156-ФЗ «Об инвестиционных фондах», можно в рабочие дни 09:00 до 18:00 по московскому времени по адресу: 123112, г. Москва, вн. тер. г. муниципальный округ Пресненский, проезд 1-й Красногвардейский, д.21, стр.2, помещ. 4804, на сайте <a href="https://ukgrandcap.ru/">https://ukgrandcap.ru/</a>, по тел. <a href="tel:+74959704492">+7 (495) 970-44-92</a>.</p>
+    <p>Общество с ограниченной ответственностью «Гранд Капитал» имеет лицензию на осуществление деятельности по управлению инвестиционными фондами, паевыми инвестиционными фондами и негосударственными пенсионными фондами № 21-000-1-01143 от 21.03.2025.</p>
+  </div>
+</footer>
 </body>
 </html>
